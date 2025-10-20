@@ -1,0 +1,16 @@
+# Python cache & temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+
+# Large model and experiment files
+distilbert_spam_model/
+distilbert_spam2336/
+MLL_base_stage.ipynbcombined_data.csv
+
+
+# Dataset
+combined_data.csv
