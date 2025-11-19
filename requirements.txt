@@ -1,35 +1,18 @@
 
-
-datasets==4.1.1
-
-Django==5.2.4
-evaluate==0.4.6
-
-
-gitdb==4.0.12
 GitPython==3.1.45
-
-h5py==3.14.0
 huggingface-hub==0.35.3
-
-ipykernel==6.30.1
 ipython==9.4.0
-
 joblib==1.5.1
-
 jupyter_client==8.6.3
 jupyter_core==5.8.1
-jupyterlab_widgets==3.0.15
-kagglehub==0.3.13
+
 keras==3.11.3
 
 Markdown==3.9
-markdown-it-py==4.0.0
+
 markdown2==2.5.3
 
 matplotlib==3.10.6
-matplotlib-inline==0.1.7
-mdurl==0.1.2
 
 nltk==3.9.1
 numpy==2.3.2
@@ -37,9 +20,6 @@ numpy==2.3.2
 packaging==25.0
 pandas==2.3.1
 
-pillow==11.3.0
-
-PyYAML==6.0.2
 
 regex==2025.9.1
 
@@ -64,3 +44,4 @@ torchvision==0.23.0+cu129
 transformers==4.56.2
 
 wheel==0.45.1
+
