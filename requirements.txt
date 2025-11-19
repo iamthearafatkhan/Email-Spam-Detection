@@ -1,64 +1,22 @@
-
-#GitPython==3.1.45
-huggingface-hub==0.35.3
-#ipython==9.4.0
-#joblib==1.5.1
-#jupyter_client==8.6.3
-#jupyter_core==5.8.1
-
-#keras==3.11.3
-
-#Markdown==3.9
-
-#markdown2==2.5.3
-
-#matplotlib==3.10.6
-
-#nltk==3.9.1
-#numpy==2.3.2
-
-#packaging==25.0
-#pandas==2.3.1
-
-
-#regex==2025.9.1
-
-#scikit-learn==1.7.1
-#scipy==1.16.1
-#seaborn==0.13.2
-#sentry-sdk==2.39.0
-
-#streamlit==1.50.0
-
-#tensorboard==2.20.0
-#tensorboard-data-server==0.7.2
-#tensorflow==2.20.0
-
-#tf_keras==2.20.1
-
-#tokenizers==0.22.1
-#torch
-#torch==2.8.0 #torch==2.8.0+cu129
-#torchaudio==2.8.0+cu129
-#torchvision==0.23.0+cu129
-
-transformers==4.56.2
-
-#wheel==0.45.1 
-
-
-
+# Core dependencies
 streamlit==1.50.0
 pandas==2.3.1
 numpy==2.3.2
 scikit-learn==1.7.1
 nltk==3.9.1
-regex==2025.9.1
 joblib==1.5.1
+
+# Visualization
 matplotlib==3.10.6
 seaborn==0.13.2
 
+# NLP + Transformers
+transformers==4.56.2
+huggingface-hub==0.35.3
+tokenizers==0.22.1
+regex==2023.10.3
+
+# PyTorch CPU version (compatible with Python 3.13)
 torch==2.8.0
-tensorflow==2.17.0
-tensorboard==2.17.0
-tf_keras
+
+# REMOVE tensorflow completely
