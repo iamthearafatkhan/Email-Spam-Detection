@@ -5,16 +5,32 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import base64
 from pathlib import Path
 
-# --- App Config ---
+# --------------------------------------------------
+#               STREAMLIT PAGE CONFIG
+# --------------------------------------------------
 st.set_page_config(
     page_title="Spam Detector | DistilBERT",
     page_icon="📧",
     layout="centered"
 )
 
-# --- Background Setup ---
+# --------------------------------------------------
+#               DARK / LIGHT MODE
+# --------------------------------------------------
+theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"])
+
+if theme == "Dark":
+    st.markdown("""
+        <style>
+        body, .stApp { background-color:#0d1117 !important; color:white !important; }
+        .block-container { background-color:#161b22 !important; color:white !important; }
+        </style>
+    """, unsafe_allow_html=True)
+
+# --------------------------------------------------
+#               BACKGROUND IMAGE
+# --------------------------------------------------
 def set_bg(image_file):
-    """Set background image using base64 encoding"""
     if Path(image_file).exists():
         with open(image_file, "rb") as f:
             img_data = f.read()
@@ -22,112 +38,100 @@ def set_bg(image_file):
         st.markdown(
             f"""
             <style>
-.stApp {{
-    background: url("data:image/jpg;base64,{b64_img}");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}}
-
-div.block-container {{
-    backdrop-filter: blur(8px);
-    background-color: rgba(255,255,255,0.78);
-    border-radius: 18px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    color: #000000; /* <-- Make all text inside container black */
-}}
-
-h1, h2, h3, h4, h5, h6, p, label, span, div {{
-    color: #000000 !important; /* <-- Force all headings and labels to black */
-}}
-
-.stButton>button {{
-    background-color: #2563eb;
-    color: white;
-    border-radius: 10px;
-    border: none;
-    padding: 8px 18px;
-    font-weight: 600;
-}}
-
-.stButton>button:hover {{
-    background-color: #1d4ed8;
-}}
-
-</style>
+            .stApp {{
+                background: url("data:image/jpg;base64,{b64_img}");
+                background-size: cover;
+                background-position: center;
+            }}
+            </style>
             """,
             unsafe_allow_html=True
         )
 
 set_bg("bgb.jpg")
 
-# --- Load Model and Tokenizer (cached for performance) ---
-"""
+# --------------------------------------------------
+#               LOAD MODEL
+# --------------------------------------------------
 @st.cache_resource
 def load_model():
-    model_path = "./distilbert_spam_model"
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
-    model = AutoModelForSequenceClassification.from_pretrained(model_path)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    return tokenizer, model, device 
-    """
-
-@st.cache_resource
-def load_model():
-    model_repo = "iamthearafatkhan/distilbert-spam2336"  # ✅ use your repo name
+    model_repo = "iamthearafatkhan/distilbert-spam2336"
     tokenizer = AutoTokenizer.from_pretrained(model_repo)
     model = AutoModelForSequenceClassification.from_pretrained(model_repo)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     return tokenizer, model, device
 
-
 tokenizer, model, device = load_model()
 
-# --- UI ---
-st.markdown("<h1 style='text-align:center;'>📨 Spam E-Mail Detector</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:17px;'>Powered by <b>DistilBERT</b> NLP model</p>", unsafe_allow_html=True)
+# --------------------------------------------------
+#               PREDICTION FUNCTION
+# --------------------------------------------------
+def predict(message):
+    inputs = tokenizer(
+        message,
+        truncation=True,
+        padding="max_length",
+        max_length=128,
+        return_tensors="pt"
+    )
+    inputs = {k: v.to(device) for k, v in inputs.items()}
 
+    with torch.no_grad():
+        outputs = model(**inputs)
+        probs = torch.softmax(outputs.logits, dim=-1).cpu().numpy()[0]
+        pred = np.argmax(probs)
+
+    return pred, probs
+
+# --------------------------------------------------
+#               UI HEADER
+# --------------------------------------------------
+st.markdown("<h1 style='text-align:center;'>📨 Spam Email Detector</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:17px;'>Powered by DistilBERT NLP Model</p>", unsafe_allow_html=True)
+
+# --------------------------------------------------
+#               TEXT INPUT
+# --------------------------------------------------
 user_input = st.text_area(
-    "✉️ Type your message below:",
-    placeholder="e.g., Congratulations! You've won a free iPhone! 🎉",
+    "✉️ Type your message:",
+    placeholder="Write or paste email text here...",
     height=120
 )
 
+# --------------------------------------------------
+#               FILE UPLOAD INPUT
+# --------------------------------------------------
+st.subheader("📑 Or Upload a Text File")
+uploaded_file = st.file_uploader("Upload .txt file", type=["txt"])
+
+file_content = None
+if uploaded_file is not None:
+    file_content = uploaded_file.read().decode("utf-8")
+    st.text_area("File Content:", file_content, height=150)
+
+# --------------------------------------------------
+#               RUN PREDICTION
+# --------------------------------------------------
 if st.button("🔍 Predict"):
-    if user_input.strip():
-        with st.spinner("Analyzing message... Please wait"):
-            inputs = tokenizer(
-                user_input,
-                truncation=True,
-                padding="max_length",
-                max_length=128,
-                return_tensors="pt"
-            )
-            inputs = {k: v.to(device) for k, v in inputs.items()}
+    text = user_input if uploaded_file is None else file_content
 
-            with torch.no_grad():
-                outputs = model(**inputs)
-                probs = torch.nn.functional.softmax(outputs.logits, dim=-1).cpu().numpy()[0]
-                pred = np.argmax(probs)
-                label = "📬 HAM" if pred == 0 else "🚨 SPAM"
+    if text and text.strip():
+        with st.spinner("Analyzing message..."):
+            label, probs = predict(text)
+            result = "📬 HAM (Not Spam)" if label == 0 else "🚨 SPAM"
 
-            st.markdown("---")
-            st.subheader("Prediction Result:")
-            st.success(f"**{label}**")
-            st.metric(label="Confidence", value=f"{probs[pred]*100:.2f}%")
+        st.markdown("---")
+        st.subheader("Prediction Result:")
+        st.success(result)
+        st.metric("Confidence", f"{probs[label]*100:.2f}%")
 
-            st.markdown("### Class Probabilities")
-            st.progress(float(probs[1]))
-            st.write(f"**HAM:** {probs[0]*100:.2f}%")
-            st.write(f"**SPAM:** {probs[1]*100:.2f}%")
+        st.markdown("### Class Probabilities")
+        st.progress(float(probs[1]))
+        st.write(f"**HAM:** {probs[0]*100:.2f}%")
+        st.write(f"**SPAM:** {probs[1]*100:.2f}%")
     else:
-        st.warning("⚠️ Please enter a message first!")
+        st.warning("⚠️ Please type a message or upload a file.")
 
 st.markdown("---")
-st.markdown(
-    "<p style='text-align:center;'>Built with ❤️ using <b>Streamlit</b> + <b>DistilBERT</b></p>",
-    unsafe_allow_html=True
-)
+st.markdown("<p style='text-align:center;'>Built with ❤️ using Streamlit + DistilBERT</p>", unsafe_allow_html=True)
