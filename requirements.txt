@@ -37,7 +37,7 @@ tensorflow==2.20.0
 tf_keras==2.20.1
 
 tokenizers==0.22.1
-torch==2.7.1
+torch
 #torch==2.8.0 #torch==2.8.0+cu129
 torchaudio==2.8.0+cu129
 torchvision==0.23.0+cu129
