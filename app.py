@@ -5,18 +5,18 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import base64
 from pathlib import Path
 
-# --------------------------------------------------
-#               STREAMLIT PAGE CONFIG
-# --------------------------------------------------
+
+# STREAMLIT PAGE CONFIG
+
 st.set_page_config(
     page_title="Spam Detector | DistilBERT",
     page_icon="📧",
     layout="centered"
 )
 
-# --------------------------------------------------
-#               DARK / LIGHT MODE
-# --------------------------------------------------
+
+# DARK / LIGHT MODE
+
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"])
 
 if theme == "Dark":
@@ -27,9 +27,9 @@ if theme == "Dark":
         </style>
     """, unsafe_allow_html=True)
 
-# --------------------------------------------------
-#               BACKGROUND IMAGE
-# --------------------------------------------------
+
+# BACKGROUND IMAGE
+
 def set_bg(image_file):
     if Path(image_file).exists():
         with open(image_file, "rb") as f:
@@ -50,9 +50,9 @@ def set_bg(image_file):
 
 set_bg("bgb.jpg")
 
-# --------------------------------------------------
-#               LOAD MODEL
-# --------------------------------------------------
+
+# LOAD MODEL
+
 @st.cache_resource
 def load_model():
     model_repo = "iamthearafatkhan/distilbert-spam2336"
@@ -64,9 +64,9 @@ def load_model():
 
 tokenizer, model, device = load_model()
 
-# --------------------------------------------------
-#               PREDICTION FUNCTION
-# --------------------------------------------------
+
+# PREDICTION FUNCTION
+
 def predict(message):
     inputs = tokenizer(
         message,
@@ -84,24 +84,24 @@ def predict(message):
 
     return pred, probs
 
-# --------------------------------------------------
-#               UI HEADER
-# --------------------------------------------------
-st.markdown("<h1 style='text-align:center;'>📨 Spam Email Detector</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:17px;'>Powered by DistilBERT NLP Model</p>", unsafe_allow_html=True)
 
-# --------------------------------------------------
-#               TEXT INPUT
-# --------------------------------------------------
+# UI HEADER
+
+st.markdown("<h1 style='text-align:center;'>📨 Spam Email Detector</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:17px;'>Powered by DistilBERT Model</p>", unsafe_allow_html=True)
+
+
+# TEXT INPUT
+
 user_input = st.text_area(
     "✉️ Type your message:",
     placeholder="Write or paste email text here...",
     height=120
 )
 
-# --------------------------------------------------
-#               FILE UPLOAD INPUT
-# --------------------------------------------------
+
+# FILE UPLOAD INPUT
+
 st.subheader("📑 Or Upload a Text File")
 uploaded_file = st.file_uploader("Upload .txt file", type=["txt"])
 
@@ -110,9 +110,9 @@ if uploaded_file is not None:
     file_content = uploaded_file.read().decode("utf-8")
     st.text_area("File Content:", file_content, height=150)
 
-# --------------------------------------------------
-#               RUN PREDICTION
-# --------------------------------------------------
+
+# RUN PREDICTION
+
 if st.button("🔍 Predict"):
     text = user_input if uploaded_file is None else file_content
 
