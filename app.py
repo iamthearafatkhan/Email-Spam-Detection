@@ -15,17 +15,7 @@ st.set_page_config(
 )
 
 
-# DARK / LIGHT MODE
 
-theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"])
-
-if theme == "Dark":
-    st.markdown("""
-        <style>
-        body, .stApp { background-color:#0d1117 !important; color:white !important; }
-        .block-container { background-color:#161b22 !important; color:white !important; }
-        </style>
-    """, unsafe_allow_html=True)
 
 
 # BACKGROUND IMAGE
@@ -48,7 +38,7 @@ def set_bg(image_file):
             unsafe_allow_html=True
         )
 
-set_bg("bgb.jpg")
+set_bg("bgb2.jpg")
 
 
 # LOAD MODEL
@@ -91,6 +81,34 @@ st.markdown("<h1 style='text-align:center;'>📨 Spam Email Detector</h1>", unsa
 st.markdown("<p style='text-align:center; font-size:17px;'>Powered by DistilBERT Model</p>", unsafe_allow_html=True)
 
 
+
+# ---- Transparent textarea  ----
+st.markdown("""
+<style>
+/* All Streamlit textarea containers */
+[data-testid="stTextArea"] > div > div > textarea {
+    background-color: rgba(255, 255, 255, 0.35) !important;
+    color: black !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Remove white background from parent containers */
+[data-testid="stTextArea"] > div,
+[data-testid="stTextArea"] > div > div {
+    background: transparent !important;
+}
+
+/*label color */
+label[data-testid="stWidgetLabel"] {
+    color: white !important;
+    font-size: 16px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # TEXT INPUT
 
 user_input = st.text_area(
@@ -100,9 +118,11 @@ user_input = st.text_area(
 )
 
 
+
+
 # FILE UPLOAD INPUT
 
-st.subheader("📑 Or Upload a Text File")
+st.subheader("📑Upload a Text File")
 uploaded_file = st.file_uploader("Upload .txt file", type=["txt"])
 
 file_content = None
