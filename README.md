@@ -17,8 +17,7 @@ email spam classification system built using DistilBERT, TF-IDF + ML models, and
 * ✔ Additional ML models for comparison
 * ✔ Real-time message prediction
 * ✔ File upload (.txt) prediction
-* ✔ Background image + light/dark theme
-* ✔ Confidence score + probability visualization
+* ✔ Confidence score
 * ✔ Deployed on Streamlit Cloud
 * ✔ HuggingFace model hosting
 
