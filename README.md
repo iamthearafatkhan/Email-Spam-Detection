@@ -37,8 +37,21 @@ email spam classification system built using DistilBERT, TF-IDF + ML models, and
 - Pandas, NumPy
 
 
+
+
 📦 Model Loading
 - The app loads your custom model directly from HuggingFace:
  - model_repo = "iamthearafatkhan/distilbert-spam2336"
  - tokenizer = AutoTokenizer.from_pretrained(model_repo)
  - model = AutoModelForSequenceClassification.from_pretrained(model_repo)
+
+
+---
+
+## 👤 Author
+Arafat Khan - @iamthearafatkhan
+
+---
+
+## 📄 License
+This project is open-source and free for anyone to use, modify, or distribute.
